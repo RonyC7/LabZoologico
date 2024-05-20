@@ -1,0 +1,133 @@
+﻿@page "/animal-form"
+@using System.Collections.Generic
+@using Lab15Zoologico.Clases 
+
+
+@code {
+    private List<Animal> Animales = new List<Animal>();
+    private Animal NuevoAnimal = new Animal();
+    private Ave NuevaAve = new Ave();
+    private Serpiente NuevaSerpiente = new Serpiente();
+
+    private string TipoAnimalSeleccionado = "Animal";
+
+    private void AgregarAnimal()
+    {
+        if (TipoAnimalSeleccionado == "Animal")
+        {
+            Animales.Add(NuevoAnimal);
+            NuevoAnimal = new Animal();
+        }
+        else if (TipoAnimalSeleccionado == "Ave")
+        {
+            Animales.Add(NuevaAve);
+            NuevaAve = new Ave();
+        }
+        else if (TipoAnimalSeleccionado == "Serpiente")
+        {
+            Animales.Add(NuevaSerpiente);
+            NuevaSerpiente = new Serpiente();
+        }
+    }
+}
+
+<h3>Formulario de Ingreso de Animales</h3>
+
+<label>Tipo de Animal:</label>
+<select @bind="TipoAnimalSeleccionado">
+    <option value="Animal">Animal</option>
+    <option value="Ave">Ave</option>
+    <option value="Serpiente">Serpiente</option>
+</select>
+
+@if (TipoAnimalSeleccionado == "Animal")
+{
+    <EditForm Model="NuevoAnimal">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Nombre Propio:</label>
+            <InputText @bind-Value="NuevoAnimal.NombrePropio" />
+        </div>
+        <div>
+            <label>Especie:</label>
+            <InputText @bind-Value="NuevoAnimal.Especie" />
+        </div>
+        <div>
+            <label>Tipo de Alimentación:</label>
+            <InputText @bind-Value="NuevoAnimal.TipoAlimentacion" />
+        </div>
+        <div>
+            <label>Tiempo Máximo de Vida:</label>
+            <InputNumber @bind-Value="NuevoAnimal.TiempoMaximoVida" />
+        </div>
+        <button @onclick="AgregarAnimal">Agregar Animal</button>
+    </EditForm>
+}
+else if (TipoAnimalSeleccionado == "Ave")
+{
+    <EditForm Model="NuevaAve">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Nombre Propio:</label>
+            <InputText @bind-Value="NuevaAve.NombrePropio" />
+        </div>
+        <div>
+            <label>Especie:</label>
+            <InputText @bind-Value="NuevaAve.Especie" />
+        </div>
+        <div>
+            <label>Tipo de Alimentación:</label>
+            <InputText @bind-Value="NuevaAve.TipoAlimentacion" />
+        </div>
+        <div>
+            <label>Tiempo Máximo de Vida:</label>
+            <InputNumber @bind-Value="NuevaAve.TiempoMaximoVida" />
+        </div>
+        <div>
+            <label>Vuela:</label>
+            <InputCheckbox @bind-Value="NuevaAve.Vuela" />
+        </div>
+        <div>
+            <label>Período de Incubación:</label>
+            <InputNumber @bind-Value="NuevaAve.PeriodoIncubacion" />
+        </div>
+        <button @onclick="AgregarAnimal">Agregar Ave</button>
+    </EditForm>
+}
+else if (TipoAnimalSeleccionado == "Serpiente")
+{
+    <EditForm Model="NuevaSerpiente">
+        <DataAnnotationsValidator />
+        <ValidationSummary />
+
+        <div>
+            <label>Nombre Propio:</label>
+            <InputText @bind-Value="NuevaSerpiente.NombrePropio" />
+        </div>
+        <div>
+            <label>Especie:</label>
+            <InputText @bind-Value="NuevaSerpiente.Especie" />
+        </div>
+        <div>
+            <label>Tipo de Alimentación:</label>
+            <InputText @bind-Value="NuevaSerpiente.TipoAlimentacion" />
+        </div>
+        <div>
+            <label>Tiempo Máximo de Vida:</label>
+            <InputNumber @bind-Value="NuevaSerpiente.TiempoMaximoVida" />
+        </div>
+        <div>
+            <label>Venenosa:</label>
+            <InputCheckbox @bind-Value="NuevaSerpiente.Venenosa" />
+        </div>
+        <div>
+            <label>Longitud Máxima:</label>
+            <InputNumber @bind-Value="NuevaSerpiente.LongitudMaxima" />
+        </div>
+        <button @onclick="AgregarAnimal">Agregar Serpiente</button>
+    </EditForm>
+}
