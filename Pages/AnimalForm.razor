@@ -2,8 +2,8 @@
 @using System.Collections.Generic
 @using Lab15Zoologico.Clases
 @using Microsoft.AspNetCore.Components
+@using Microsoft.AspNetCore.Components.Forms
 @using System.Threading.Tasks
-
 
 @code {
     private List<Animal> Animales = new List<Animal>();
@@ -18,6 +18,7 @@
     private Animal AnimalSeleccionadoParaEliminar;
 
     private bool MostrarMensajeExito = false;
+    private string MensajeExito = string.Empty;
 
     private async Task AgregarAnimal()
     {
@@ -36,8 +37,9 @@
             Animales.Add(NuevaSerpiente);
             NuevaSerpiente = new Serpiente();
         }
+        MensajeExito = "¡Animal agregado exitosamente!";
         MostrarMensajeExito = true;
-        await Task.Delay(3000); 
+        await Task.Delay(3000);
         MostrarMensajeExito = false;
     }
 
@@ -46,6 +48,22 @@
         AnimalSeleccionadoParaEditar = animal;
         MostrarFormularioEdicion = true;
         TipoAnimalSeleccionado = animal is Ave ? "Ave" : animal is Serpiente ? "Serpiente" : "Animal";
+    }
+
+    private async Task GuardarCambiosEdicion()
+    {
+        MostrarFormularioEdicion = false;
+        AnimalSeleccionadoParaEditar = null;
+        MensajeExito = "¡Animal editado con éxito!";
+        MostrarMensajeExito = true;
+        await Task.Delay(3000); // Espera 3 segundos
+        MostrarMensajeExito = false;
+    }
+
+    private void CancelarEdicion()
+    {
+        MostrarFormularioEdicion = false;
+        AnimalSeleccionadoParaEditar = null;
     }
 
     private void ConfirmarEliminarAnimal(Animal animal)
@@ -66,152 +84,247 @@
         MostrarConfirmacionEliminacion = false;
         AnimalSeleccionadoParaEliminar = null;
     }
+
+    private string ConvertirBooleanoABooleanoEspanol(bool valor)
+    {
+        return valor ? "Sí" : "No";
+    }
 }
 
-<h3> Ingreso de Animales</h3>
+<div class="container mt-5">
+    <h3 class="mb-4"> Ingreso de Animales</h3>
 
-<label>Tipo de Animal:</label>
-<select @bind="TipoAnimalSeleccionado">
-    <option value="Animal">Animal</option>
-    <option value="Ave">Ave</option>
-    <option value="Serpiente">Serpiente</option>
-</select>
-
-@if (TipoAnimalSeleccionado == "Animal")
-{
-    <EditForm Model="NuevoAnimal">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div>
-            <label>Nombre Propio:</label>
-            <InputText @bind-Value="NuevoAnimal.NombrePropio" />
-        </div>
-        <div>
-            <label>Especie:</label>
-            <InputText @bind-Value="NuevoAnimal.Especie" />
-        </div>
-        <div>
-            <label>Tipo de Alimentación:</label>
-            <InputText @bind-Value="NuevoAnimal.TipoAlimentacion" />
-        </div>
-        <div>
-            <label>Tiempo Máximo de Vida:</label>
-            <InputNumber @bind-Value="NuevoAnimal.TiempoMaximoVida" />
-        </div>
-        <button @onclick="AgregarAnimal">Agregar Animal</button>
-    </EditForm>
-}
-else if (TipoAnimalSeleccionado == "Ave")
-{
-    <EditForm Model="NuevaAve">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div>
-            <label>Nombre Propio:</label>
-            <InputText @bind-Value="NuevaAve.NombrePropio" />
-        </div>
-        <div>
-            <label>Especie:</label>
-            <InputText @bind-Value="NuevaAve.Especie" />
-        </div>
-        <div>
-            <label>Tipo de Alimentación:</label>
-            <InputText @bind-Value="NuevaAve.TipoAlimentacion" />
-        </div>
-        <div>
-            <label>Tiempo Máximo de Vida:</label>
-            <InputNumber @bind-Value="NuevaAve.TiempoMaximoVida" />
-        </div>
-        <div>
-            <label>Vuela:</label>
-            <InputCheckbox @bind-Value="NuevaAve.Vuela" />
-        </div>
-        <div>
-            <label>Período de Incubación:</label>
-            <InputNumber @bind-Value="NuevaAve.PeriodoIncubacion" />
-        </div>
-        <button @onclick="AgregarAnimal">Agregar Ave</button>
-    </EditForm>
-}
-else if (TipoAnimalSeleccionado == "Serpiente")
-{
-    <EditForm Model="NuevaSerpiente">
-        <DataAnnotationsValidator />
-        <ValidationSummary />
-
-        <div>
-            <label>Nombre Propio:</label>
-            <InputText @bind-Value="NuevaSerpiente.NombrePropio" />
-        </div>
-        <div>
-            <label>Especie:</label>
-            <InputText @bind-Value="NuevaSerpiente.Especie" />
-        </div>
-        <div>
-            <label>Tipo de Alimentación:</label>
-            <InputText @bind-Value="NuevaSerpiente.TipoAlimentacion" />
-        </div>
-        <div>
-            <label>Tiempo Máximo de Vida:</label>
-            <InputNumber @bind-Value="NuevaSerpiente.TiempoMaximoVida" />
-        </div>
-        <div>
-            <label>Venenosa:</label>
-            <InputCheckbox @bind-Value="NuevaSerpiente.Venenosa" />
-        </div>
-        <div>
-            <label>Longitud Máxima:</label>
-            <InputNumber @bind-Value="NuevaSerpiente.LongitudMaxima" />
-        </div>
-        <button @onclick="AgregarAnimal">Agregar Serpiente</button>
-    </EditForm>
-}
-
-@if (MostrarMensajeExito)
-{
-    <div class="alert alert-success" role="alert">
-        ¡Animal agregado exitosamente!
+    <div class="form-group">
+        <label>Tipo de Animal:</label>
+        <select class="form-control" @bind="TipoAnimalSeleccionado">
+            <option value="Animal">Animal</option>
+            <option value="Ave">Ave</option>
+            <option value="Serpiente">Serpiente</option>
+        </select>
     </div>
-}
 
-<h3>Lista de Animales</h3>
+    @if (TipoAnimalSeleccionado == "Animal")
+    {
+        <EditForm Model="NuevoAnimal">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
 
-<table class="table">
-    <thead>
-        <tr>
-            <th>Nombre Propio</th>
-            <th>Especie</th>
-            <th>Tipo de Alimentación</th>
-            <th>Tiempo Máximo de Vida</th>
-            <th>Acciones</th>
-        </tr>
-    </thead>
-    <tbody>
-        @foreach (var animal in Animales)
-        {
+            <div class="form-group">
+                <label>Nombre Propio:</label>
+                <InputText class="form-control" @bind-Value="NuevoAnimal.NombrePropio" />
+            </div>
+            <div class="form-group">
+                <label>Especie:</label>
+                <InputText class="form-control" @bind-Value="NuevoAnimal.Especie" />
+            </div>
+            <div class="form-group">
+                <label>Tipo de Alimentación:</label>
+                <InputText class="form-control" @bind-Value="NuevoAnimal.TipoAlimentacion" />
+            </div>
+            <div class="form-group">
+                <label>Tiempo Máximo de Vida:</label>
+                <InputNumber class="form-control" @bind-Value="NuevoAnimal.TiempoMaximoVida" />
+            </div>
+            <button type="button" class="btn btn-primary mt-2" @onclick="AgregarAnimal">Agregar Animal</button>
+        </EditForm>
+    }
+    else if (TipoAnimalSeleccionado == "Ave")
+    {
+        <EditForm Model="NuevaAve">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label>Nombre Propio:</label>
+                <InputText class="form-control" @bind-Value="NuevaAve.NombrePropio" />
+            </div>
+            <div class="form-group">
+                <label>Especie:</label>
+                <InputText class="form-control" @bind-Value="NuevaAve.Especie" />
+            </div>
+            <div class="form-group">
+                <label>Tipo de Alimentación:</label>
+                <InputText class="form-control" @bind-Value="NuevaAve.TipoAlimentacion" />
+            </div>
+            <div class="form-group">
+                <label>Tiempo Máximo de Vida:</label>
+                <InputNumber class="form-control" @bind-Value="NuevaAve.TiempoMaximoVida" />
+            </div>
+            <div class="form-group">
+                <label>Vuela:</label>
+                <InputCheckbox class="form-check-input" @bind-Value="NuevaAve.Vuela" />
+                <label class="form-check-label ml-2">@ConvertirBooleanoABooleanoEspanol(NuevaAve.Vuela)</label>
+            </div>
+            <div class="form-group">
+                <label>Período de Incubación:</label>
+                <InputNumber class="form-control" @bind-Value="NuevaAve.PeriodoIncubacion" />
+            </div>
+            <button type="button" class="btn btn-primary mt-2" @onclick="AgregarAnimal">Agregar Ave</button>
+        </EditForm>
+    }
+    else if (TipoAnimalSeleccionado == "Serpiente")
+    {
+        <EditForm Model="NuevaSerpiente">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label>Nombre Propio:</label>
+                <InputText class="form-control" @bind-Value="NuevaSerpiente.NombrePropio" />
+            </div>
+            <div class="form-group">
+                <label>Especie:</label>
+                <InputText class="form-control" @bind-Value="NuevaSerpiente.Especie" />
+            </div>
+            <div class="form-group">
+                <label>Tipo de Alimentación:</label>
+                <InputText class="form-control" @bind-Value="NuevaSerpiente.TipoAlimentacion" />
+            </div>
+            <div class="form-group">
+                <label>Tiempo Máximo de Vida:</label>
+                <InputNumber class="form-control" @bind-Value="NuevaSerpiente.TiempoMaximoVida" />
+            </div>
+            <div class="form-group">
+                <label>Venenosa:</label>
+                <InputCheckbox class="form-check-input" @bind-Value="NuevaSerpiente.Venenosa" />
+                <label class="form-check-label ml-2">@ConvertirBooleanoABooleanoEspanol(NuevaSerpiente.Venenosa)</label>
+            </div>
+            <div class="form-group">
+                <label>Longitud Máxima:</label>
+                <InputNumber class="form-control" @bind-Value="NuevaSerpiente.LongitudMaxima" />
+            </div>
+            <button type="button" class="btn btn-primary mt-2" @onclick="AgregarAnimal">Agregar Serpiente</button>
+        </EditForm>
+    }
+
+    @if (MostrarFormularioEdicion)
+    {
+        <h3 class="mt-4">Edición de Animal</h3>
+        <EditForm Model="AnimalSeleccionadoParaEditar">
+            <DataAnnotationsValidator />
+            <ValidationSummary />
+
+            <div class="form-group">
+                <label>Nombre Propio:</label>
+                <InputText class="form-control" @bind-Value="AnimalSeleccionadoParaEditar.NombrePropio" />
+            </div>
+            <div class="form-group">
+                <label>Especie:</label>
+                <InputText class="form-control" @bind-Value="AnimalSeleccionadoParaEditar.Especie" />
+            </div>
+            <div class="form-group">
+                <label>Tipo de Alimentación:</label>
+                <InputText class="form-control" @bind-Value="AnimalSeleccionadoParaEditar.TipoAlimentacion" />
+            </div>
+            <div class="form-group">
+                <label>Tiempo Máximo de Vida:</label>
+                <InputNumber class="form-control" @bind-Value="AnimalSeleccionadoParaEditar.TiempoMaximoVida" />
+            </div>
+
+            @if (AnimalSeleccionadoParaEditar is Ave aveEditar)
+            {
+                <div class="form-group">
+                    <label>Vuela:</label>
+                    <InputCheckbox class="form-check-input" @bind-Value="aveEditar.Vuela" />
+                    <label class="form-check-label ml-2">@ConvertirBooleanoABooleanoEspanol(aveEditar.Vuela)</label>
+                </div>
+                <div class="form-group">
+                    <label>Período de Incubación:</label>
+                    <InputNumber class="form-control" @bind-Value="aveEditar.PeriodoIncubacion" />
+                </div>
+            }
+            else if (AnimalSeleccionadoParaEditar is Serpiente serpienteEditar)
+            {
+                <div class="form-group">
+                    <label>Venenosa:</label>
+                    <InputCheckbox class="form-check-input" @bind-Value="serpienteEditar.Venenosa" />
+                    <label class="form-check-label ml-2">@ConvertirBooleanoABooleanoEspanol(serpienteEditar.Venenosa)</label>
+                </div>
+                <div class="form-group">
+                    <label>Longitud Máxima:</label>
+                    <InputNumber class="form-control" @bind-Value="serpienteEditar.LongitudMaxima" />
+                </div>
+            }
+
+            <button type="button" class="btn btn-success mt-2" @onclick="GuardarCambiosEdicion">Guardar Cambios</button>
+            <button type="button" class="btn btn-secondary mt-2" @onclick="CancelarEdicion">Cancelar</button>
+        </EditForm>
+    }
+
+    @if (MostrarMensajeExito)
+    {
+        <div class="alert alert-success mt-4">@MensajeExito</div>
+    }
+
+    <h3 class="mt-4">Lista de Animales</h3>
+    <table class="table table-striped">
+        <thead>
             <tr>
-                <td>@animal.NombrePropio</td>
-                <td>@animal.Especie</td>
-                <td>@animal.TipoAlimentacion</td>
-                <td>@animal.TiempoMaximoVida</td>
-                <td>
-                    <button @onclick="() => EditarAnimal(animal)">Editar</button>
-                    <button @onclick="() => ConfirmarEliminarAnimal(animal)">Eliminar</button>
-                </td>
+                <th>Nombre Propio</th>
+                <th>Especie</th>
+                <th>Tipo de Alimentación</th>
+                <th>Tiempo Máximo de Vida</th>
+                <th>Detalles</th>
+                <th>Acciones</th>
             </tr>
-        }
-    </tbody>
-</table>
+        </thead>
+        <tbody>
+            @foreach (var animal in Animales)
+            {
+                <tr>
+                    <td>@animal.NombrePropio</td>
+                    <td>@animal.Especie</td>
+                    <td>@animal.TipoAlimentacion</td>
+                    <td>@animal.TiempoMaximoVida</td>
+                    <td>
+                        @if (animal is Ave ave)
+                        {
+                            <div>
+                                <strong>Vuela:</strong> @ConvertirBooleanoABooleanoEspanol(ave.Vuela)
+                            </div>
+                            <div>
+                                <strong>Período de Incubación:</strong> @ave.PeriodoIncubacion
+                            </div>
+                        }
+                        else if (animal is Serpiente serpiente)
+                        {
+                            <div>
+                                <strong>Venenosa:</strong> @ConvertirBooleanoABooleanoEspanol(serpiente.Venenosa)
+                            </div>
+                            <div>
+                                <strong>Longitud Máxima:</strong> @serpiente.LongitudMaxima
+                            </div>
+                        }
+                    </td>
+                    <td>
+                        <button class="btn btn-warning btn-sm" @onclick="() => EditarAnimal(animal)">Editar</button>
+                        <button class="btn btn-danger btn-sm" @onclick="() => ConfirmarEliminarAnimal(animal)">Eliminar</button>
+                    </td>
+                </tr>
+            }
+        </tbody>
+    </table>
 
-@if (MostrarConfirmacionEliminacion)
-{
-    <div class="modal">
-        <div class="modal-content">
-            <p>¿Está seguro de que desea eliminar este animal?</p>
-            <button @onclick="EliminarAnimal">Sí</button>
-            <button @onclick="CancelarEliminacion">No</button>
+    @if (MostrarConfirmacionEliminacion)
+    {
+        <div class="modal fade show d-block" tabindex="-1" role="dialog">
+            <div class="modal-dialog" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title">Confirmar Eliminación</h5>
+                        <button type="button" class="close" @onclick="CancelarEliminacion" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <p>¿Está seguro de que desea eliminar este animal?</p>
+                    </div>
+                    <div class="modal-footer">
+                        <button type="button" class="btn btn-danger" @onclick="EliminarAnimal">Sí</button>
+                        <button type="button" class="btn btn-secondary" @onclick="CancelarEliminacion">No</button>
+                    </div>
+                </div>
+            </div>
         </div>
-    </div>
-}
+    }
+</div>
