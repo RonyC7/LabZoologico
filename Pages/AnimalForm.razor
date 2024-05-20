@@ -1,6 +1,8 @@
 ﻿@page "/animal-form"
 @using System.Collections.Generic
-@using Lab15Zoologico.Clases 
+@using Lab15Zoologico.Clases
+@using Microsoft.AspNetCore.Components
+@using System.Threading.Tasks
 
 
 @code {
@@ -10,8 +12,14 @@
     private Serpiente NuevaSerpiente = new Serpiente();
 
     private string TipoAnimalSeleccionado = "Animal";
+    private Animal AnimalSeleccionadoParaEditar;
+    private bool MostrarFormularioEdicion = false;
+    private bool MostrarConfirmacionEliminacion = false;
+    private Animal AnimalSeleccionadoParaEliminar;
 
-    private void AgregarAnimal()
+    private bool MostrarMensajeExito = false;
+
+    private async Task AgregarAnimal()
     {
         if (TipoAnimalSeleccionado == "Animal")
         {
@@ -28,10 +36,39 @@
             Animales.Add(NuevaSerpiente);
             NuevaSerpiente = new Serpiente();
         }
+        MostrarMensajeExito = true;
+        await Task.Delay(3000); 
+        MostrarMensajeExito = false;
+    }
+
+    private void EditarAnimal(Animal animal)
+    {
+        AnimalSeleccionadoParaEditar = animal;
+        MostrarFormularioEdicion = true;
+        TipoAnimalSeleccionado = animal is Ave ? "Ave" : animal is Serpiente ? "Serpiente" : "Animal";
+    }
+
+    private void ConfirmarEliminarAnimal(Animal animal)
+    {
+        AnimalSeleccionadoParaEliminar = animal;
+        MostrarConfirmacionEliminacion = true;
+    }
+
+    private void EliminarAnimal()
+    {
+        Animales.Remove(AnimalSeleccionadoParaEliminar);
+        MostrarConfirmacionEliminacion = false;
+        AnimalSeleccionadoParaEliminar = null;
+    }
+
+    private void CancelarEliminacion()
+    {
+        MostrarConfirmacionEliminacion = false;
+        AnimalSeleccionadoParaEliminar = null;
     }
 }
 
-<h3>Formulario de Ingreso de Animales</h3>
+<h3> Ingreso de Animales</h3>
 
 <label>Tipo de Animal:</label>
 <select @bind="TipoAnimalSeleccionado">
@@ -130,4 +167,51 @@ else if (TipoAnimalSeleccionado == "Serpiente")
         </div>
         <button @onclick="AgregarAnimal">Agregar Serpiente</button>
     </EditForm>
+}
+
+@if (MostrarMensajeExito)
+{
+    <div class="alert alert-success" role="alert">
+        ¡Animal agregado exitosamente!
+    </div>
+}
+
+<h3>Lista de Animales</h3>
+
+<table class="table">
+    <thead>
+        <tr>
+            <th>Nombre Propio</th>
+            <th>Especie</th>
+            <th>Tipo de Alimentación</th>
+            <th>Tiempo Máximo de Vida</th>
+            <th>Acciones</th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var animal in Animales)
+        {
+            <tr>
+                <td>@animal.NombrePropio</td>
+                <td>@animal.Especie</td>
+                <td>@animal.TipoAlimentacion</td>
+                <td>@animal.TiempoMaximoVida</td>
+                <td>
+                    <button @onclick="() => EditarAnimal(animal)">Editar</button>
+                    <button @onclick="() => ConfirmarEliminarAnimal(animal)">Eliminar</button>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>
+
+@if (MostrarConfirmacionEliminacion)
+{
+    <div class="modal">
+        <div class="modal-content">
+            <p>¿Está seguro de que desea eliminar este animal?</p>
+            <button @onclick="EliminarAnimal">Sí</button>
+            <button @onclick="CancelarEliminacion">No</button>
+        </div>
+    </div>
 }
